@@ -331,7 +331,7 @@ _flutter.loader = null;
      * @returns {HTMLScriptElement}
      */
     _createScriptTag(url) {
-      const promises = Object.keys(mainjsManifest).filter(key => /^main\.dart_(\d)\.js$/g.test(key)).sort().map(key => `${assetBase}${mainjsManifest[key]}`).map(this._downloadSliceJs);
+      const promises = Object.keys(mainjsManifest).filter(key => /^main\.dart_(\d+)\.js$/g.test(key)).sort().sort(function(a, b){if(a.length == b.length) return a - b; else return a.length - b.length;}).map(key => `${assetBase}${mainjsManifest[key]}`).map(this._downloadSliceJs);
       return Promise.all(promises).then((values)=>{
         const scriptTag = document.createElement("script");
         scriptTag.type = "application/javascript";
