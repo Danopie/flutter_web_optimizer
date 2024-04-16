@@ -475,33 +475,29 @@ class OptimizeCommand extends Command<void> {
           .whereType<File>() // 文件类型
           .where((File file) => !path.basename(file.path).startsWith('.'))
           .forEach((File file) {
-        print('hashAssetsDir - file: ${file}');
         // 使用 posix 平台的分隔符 /
         String key = path.relative(file.path, from: assetsDir.path);
         key = path.toUri(key).toString();
         // 替换资源清单文件
-        // assetManifestJsonContents =
-        //     assetManifestJsonContents.replaceFirstMapped(
-        //   RegExp('(.*)($key)(.*)'),
-        //   (Match match) => replace(match, file, key, _hashFiles),
-        // );
-        // assetManifestBinContents = assetManifestBinContents.replaceFirstMapped(
-        //   RegExp('(.*)($key)(.*)'),
-        //   (Match match) => replace(match, file, key, _hashFiles),
-        // );
-        // // 替换字体清单文件
-        // fontManifestContents = fontManifestContents.replaceAllMapped(
-        //   RegExp('(.*)($key)(.*)'),
-        //   (Match match) => replace(match, file, key, _hashFiles),
-        // );
+        assetManifestJsonContents =
+            assetManifestJsonContents.replaceFirstMapped(
+          RegExp('(.*)($key)(.*)'),
+          (Match match) => replace(match, file, key, _hashFiles),
+        );
+        assetManifestBinContents = assetManifestBinContents.replaceFirstMapped(
+          RegExp('(.*)($key)(.*)'),
+          (Match match) => replace(match, file, key, _hashFiles),
+        );
+        // 替换字体清单文件
+        fontManifestContents = fontManifestContents.replaceAllMapped(
+          RegExp('(.*)($key)(.*)'),
+          (Match match) => replace(match, file, key, _hashFiles),
+        );
 
         if (<String>['.svg'].contains(path.extension(file.path))) {
           // 针对flutter_svg插件使用svg文件的特殊处理
           files[key] = file;
         }
-
-        print('hashAssetsDir - done file: ${file}');
-
       });
 
       // 写入修改后的资源、字体清单文件
@@ -598,12 +594,12 @@ class OptimizeCommand extends Command<void> {
     // 需要修正源码中关联的文件引用
     final Map<String, File> amendSourceCodeRelatedFiles = <String, File>{};
 
-    hashCanvaskitDir();
-    print('hashCanvaskitDir success');
-    hashIconsDir();
-    print('hashIconsDir success');
-    hashAssetsDir(amendSourceCodeRelatedFiles);
-    print('hashAssetsDir success');
+    // hashCanvaskitDir();
+    // print('hashCanvaskitDir success');
+    // hashIconsDir();
+    // print('hashIconsDir success');
+    // hashAssetsDir(amendSourceCodeRelatedFiles);
+    // print('hashAssetsDir success');
     amendSourceCode(amendSourceCodeRelatedFiles);
     print('amendSourceCode success');
     hashWebOutputDir();
@@ -881,10 +877,8 @@ class OptimizeCommand extends Command<void> {
       }
     }
 
-
     /// 读取index.html
     final File file = File('$_webOutput/index.html');
-
 
     String contents = file.readAsStringSync();
 
